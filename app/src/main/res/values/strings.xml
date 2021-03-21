@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">StackFlow</string>
+    <string name="stack_over_flow">StackOverFlow</string>
+    <string name="loading">Loading</string>
+    <string name="error_msg">Something went wrong. Please retry</string>
+    <string name="retry">Retry</string>
+</resources>
