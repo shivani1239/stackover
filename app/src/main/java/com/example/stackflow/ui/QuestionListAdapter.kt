@@ -1,66 +1,56 @@
 package com.example.stackflow.ui
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.bumptech.glide.Glide
 import com.example.stackflow.R
+import com.example.stackflow.databinding.UnansweredListBinding
 import com.example.stackflow.model.QuestionItemList
 
-class QuestionListAdapter(
-    private var questionItemListList: MutableList<QuestionItemList>, private val context: Context,
-    private val listener: QuestionClickListener
-) :
-    RecyclerView.Adapter<QuestionListAdapter.ViewHolder>() {
+class QuestionListAdapter(var questionItemListList: MutableList<QuestionItemList>,var questionClickListener: QuestionClickListener
+) : RecyclerView.Adapter<QuestionListAdapter.ViewHolder>() {
+
+
+    fun updateQuetstionList(questionItemList:MutableList<QuestionItemList>){
+       this.questionItemListList= questionItemList
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            LayoutInflater.from(context).inflate(R.layout.unanswered_list, parent, false)
+        val binding: UnansweredListBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.unanswered_list,
+            parent,
+            false
         )
+        return ViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
-        return questionItemListList.size
+        return  questionItemListList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.question.setText(questionItemListList.get(position).title)
-        Glide.with(context).load(questionItemListList.get(position).owner.profileImage)
-            .into(holder.authorImage)
-        holder.question.setOnClickListener { listener.onQuestionClicked(position) }
+        holder.bind(questionItemListList[position])
+        holder.binding.tvQuestion.setOnClickListener {
+            questionClickListener.onQuestionClick(questionItemListList[position])
+        }
+
     }
 
-    class ViewHolder(itemLayoutView: View) : RecyclerView.ViewHolder(itemLayoutView) {
-        @BindView(R.id.iv_author)
-        lateinit var authorImage: ImageView
+    class ViewHolder(val binding: UnansweredListBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val viewModel = QuestionViewModel()
 
-        @BindView(R.id.tv_question)
-        lateinit var question: TextView
-
-        @BindView(R.id.tv_time)
-        lateinit var time: TextView
-
-        @BindView(R.id.tv_java)
-        lateinit var java: TextView
-
-        @BindView(R.id.tv_c_plus)
-        lateinit var tvCplus: TextView
-
-        @BindView(R.id.tv_java_native)
-        lateinit var javaNative: TextView
-
-        init {
-            ButterKnife.bind(this, itemLayoutView)
+        fun bind(questionItemList: QuestionItemList) {
+            viewModel.bind(questionItemList)
+            binding.viewModel = viewModel
+            binding.executePendingBindings()
         }
     }
 
+
     interface QuestionClickListener {
-        fun onQuestionClicked(position: Int)
+        fun onQuestionClick(questionItemList: QuestionItemList)
     }
 }

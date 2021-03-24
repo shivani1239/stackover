@@ -1,7 +1,7 @@
 package com.example.stackflow.core
 
 import com.example.stackflow.model.QuestionResponse
-import retrofit2.Call
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -10,5 +10,5 @@ interface ApiInterface {
     fun getQuestionList(
         @Query("order") order: String,
         @Query("sort") sort: String,
-        @Query("site") site: String): Call<QuestionResponse>
+        @Query("site") site: String): Observable<QuestionResponse>
 }
